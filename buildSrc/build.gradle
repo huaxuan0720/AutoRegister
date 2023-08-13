@@ -1,20 +1,32 @@
 apply plugin: 'groovy'
+apply plugin: "java"
+apply plugin: 'org.jetbrains.kotlin.jvm'
 
 
-
-dependencies {
-    implementation gradleApi()
-    implementation localGroovy()
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        // 添加Kotlin支持
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0"
+    }
 }
 
 repositories {
     google()
     mavenCentral()
 }
+
 dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
     implementation 'com.android.tools.build:gradle:4.0.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0"
 }
 
-
-
-
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
