@@ -1,15 +1,15 @@
 apply plugin: 'groovy'
-apply plugin: 'ooftf-maven'
+
+
+
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
 }
 
 repositories {
+    google()
     mavenCentral()
-}
-publish {
-    version = '1.4.4'//-snapshot
 }
 dependencies {
     implementation 'com.android.tools.build:gradle:4.0.1'
