@@ -18,7 +18,7 @@ public class RegisterPlugin implements Plugin<Project> {
          * 注册transform接口
          */
         def isApp = project.plugins.hasPlugin(AppPlugin)
-        project.extensions.create(EXT_NAME, AutoRegisterConfig)
+        project.extensions.create(EXT_NAME, AutoRegisterConfig.class)
         if (isApp) {
             println 'project(' + project.name + ') apply auto-register plugin'
             def android = project.extensions.getByType(AppExtension)

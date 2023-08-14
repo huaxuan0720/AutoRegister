@@ -149,7 +149,7 @@ class RegisterInfo {
             if (index > 0) {
                 sb.append(",")
             }
-            sb.append(" \'").append(s).append("\'")
+            sb.append("\'").append(s).append("\'")
         }
         sb.append("]")
         //
