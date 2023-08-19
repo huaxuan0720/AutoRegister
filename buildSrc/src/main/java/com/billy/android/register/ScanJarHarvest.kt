@@ -5,7 +5,7 @@ import org.bouncycastle.asn1.x509.qualified.BiometricData
 
 class ScanJarHarvest {
 
-    var harvestList: List<Harvest> = ArrayList<Harvest>()
+    var harvestList: MutableList<Harvest> = ArrayList<Harvest>()
 
     class Harvest {
         private var className: String = ""

@@ -113,8 +113,8 @@ class RegisterInfo {
         return excludePatterns
     }
 
-    fun setFileContainsInitClass(file: File?) {
-        this.fileContainsInitClass = file
+    fun setFileContainsInitClass(fileContainsInitClass: File?) {
+        this.fileContainsInitClass = fileContainsInitClass
     }
 
     fun getFileContainsInitClass(): File? {
