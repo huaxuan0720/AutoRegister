@@ -1,8 +1,5 @@
 package com.billy.android.register
 
-import org.bouncycastle.asn1.x509.qualified.BiometricData
-
-
 class ScanJarHarvest {
 
     var harvestList: MutableList<Harvest> = ArrayList<Harvest>()
