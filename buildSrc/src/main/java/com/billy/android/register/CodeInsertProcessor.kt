@@ -131,7 +131,6 @@ class CodeInsertProcessor(private val extension: RegisterInfo) {
             exceptions: Array<out String>?
         ): MethodVisitor {
             var mv : MethodVisitor = super.visitMethod(access, name, descriptor, signature, exceptions)
-            println("${name} ${extension.getInitMethodName()}: ${name == extension.getInitMethodName()}")
             if (name == extension.getInitMethodName()) {
                 val _static: Boolean = (access and Opcodes.ACC_STATIC) > 0
                 mv = MyMethodVisitor(Opcodes.ASM6, mv, _static)

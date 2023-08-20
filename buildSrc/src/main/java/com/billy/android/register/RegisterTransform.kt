@@ -133,7 +133,6 @@ class RegisterTransform(val project: Project) : Transform() {
         }
         if (cacheFile != null && gson != null) {
             val json = gson.toJson(cacheMap)
-            project.logger.error(json)
             AutoRegisterHelper.cacheRegisterHarvest(cacheFile, json)
         }
 
