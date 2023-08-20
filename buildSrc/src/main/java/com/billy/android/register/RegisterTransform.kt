@@ -140,19 +140,19 @@ class RegisterTransform(val project: Project) : Transform() {
         project.logger.error("register scan all class cost time: " + (scanFinishTime - time) + " ms")
 
         config.list.forEach { ext ->
-            if (ext.getFileContainsInitClass() != null) {
+            if (ext.fileContainsInitClass != null) {
                 println()
-                println("insert register code to file:" + ext.getFileContainsInitClass()?.absolutePath);
-                if (ext.getClassList().isEmpty()) {
-                    project.logger.error("No class implements found for interface:" + ext.getInterfaceName());
+                println("insert register code to file:" + ext.fileContainsInitClass?.absolutePath);
+                if (ext.classList.isEmpty()) {
+                    project.logger.error("No class implements found for interface:" + ext.interfaceName)
                 } else {
-                    ext.getClassList().forEach {
+                    ext.classList.forEach {
                         println(it)
                     }
                     CodeInsertProcessor.insertInitCodeTo(ext)
                 }
             } else {
-                project.logger.error("The specified register class not found:" + ext.getRegisterClassName())
+                project.logger.error("The specified register class not found:" + ext.registerClassName)
             }
         }
 

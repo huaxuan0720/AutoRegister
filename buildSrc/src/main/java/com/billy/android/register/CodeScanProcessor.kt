@@ -24,9 +24,9 @@ class CodeScanProcessor(
         @JvmStatic
         private fun shouldProcessThisClassForRegister(info: RegisterInfo?, entryName: String?) : Boolean {
             if (info != null) {
-                val list = info.getIncludePatterns()
+                val list = info.includePatterns
                 if (!list.isNullOrEmpty()) {
-                    val exlist = info.getExcludePatterns()
+                    val exlist = info.excludePatterns
                     var pattern: Pattern
                     var p: Pattern
                     for (i in 0 until list.size) {
@@ -102,8 +102,8 @@ class CodeScanProcessor(
         entryName = entryName.substring(0, entryName.lastIndexOf("."))
         var found : Boolean = false
         infoList.forEach { ext ->
-            if (ext.getInitClassName() == entryName) {
-                ext.setFileContainsInitClass(fileContainsInitClass = destFile);
+            if (ext.initClassName == entryName) {
+                ext.fileContainsInitClass = destFile
                 if (destFile.name.endsWith(".jar")) {
                     addToCacheMap(null, entryName, srcFilePath);
                     found = true
@@ -199,19 +199,19 @@ class CodeScanProcessor(
                 scanJarHarvest.harvestList.forEach { harvest ->
                     //       println("----harvest-------"+harvest.className)
                     if (harvest.getIsInitClass()) {
-                        if (info.getInitClassName() === harvest.getClassName()) {
-                            info.setFileContainsInitClass(fileContainsInitClass = destFile);
+                        if (info.initClassName === harvest.getClassName()) {
+                            info.fileContainsInitClass = destFile
                             cachedJarContainsInitClass.add(jarFilePath);
                         }
-                    } else if (info.getInterfaceName() == harvest.getInterfaceName()) {
-                        info.getClassList().add(harvest.getClassName());
+                    } else if (info.interfaceName == harvest.getInterfaceName()) {
+                        info.classList.add(harvest.getClassName());
                     }
 
-                    val superClassNames = info.getSuperClassNames()
+                    val superClassNames = info.superClassNames
                     if (!superClassNames.isNullOrEmpty()) {
                         for (i in 0 until superClassNames.size) {
                             if (superClassNames.get(i) == harvest.getInterfaceName()) {
-                                info.getClassList().add(harvest.getClassName())
+                                info.classList.add(harvest.getClassName())
                             }
                         }
                     }
@@ -254,22 +254,22 @@ class CodeScanProcessor(
 
             infoList.forEach { ext: RegisterInfo ->
                 if (shouldProcessThisClassForRegister(ext, name)) {
-                    val superClassNames = ext.getSuperClassNames()
+                    val superClassNames = ext.superClassNames
                     if (superName !== "java/lang/Object" && !superClassNames.isNullOrEmpty()) {
                         for (i in 0 until superClassNames.size) {
                             if (superClassNames.get(i) == superName && name != null) {
-                                ext.getClassList().add(name)
+                                ext.classList.add(name)
                                 found = true
                                 addToCacheMap(superName, name, filePath)
                                 return
                             }
                         }
                     }
-                    val interfaceName: String? = ext.getInterfaceName()
+                    val interfaceName: String? = ext.interfaceName
                     if (!interfaceName.isNullOrEmpty() && interfaces != null) {
                         interfaces.forEach {itName ->
                             if (itName == interfaceName && name != null) {
-                                ext.getClassList().add(name) //需要把对象注入到管理类  就是fileContainsInitClass
+                                ext.classList.add(name) //需要把对象注入到管理类  就是fileContainsInitClass
                                 addToCacheMap(itName, name, filePath)
                                 found = true
                             }

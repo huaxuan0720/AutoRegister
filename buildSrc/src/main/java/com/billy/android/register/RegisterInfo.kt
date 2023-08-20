@@ -17,118 +17,21 @@ class RegisterInfo {
     }
 
     // 以下是可配置参数
-    private var interfaceName : String? = null
-    private var superClassNames: ArrayList<String?>? = null
-    private var initClassName : String? = null
-    private var initMethodName : String? = null
-    private var registerClassName: String? = null
-    private var registerMethodName : String? = null
-    private var include: ArrayList<String?>? = null
-    private var exclude: ArrayList<String?>? = null
+    var interfaceName : String? = null
+    var superClassNames: ArrayList<String?>? = null
+    var initClassName : String? = null
+    var initMethodName : String? = null
+    var registerClassName: String? = null
+    var registerMethodName : String? = null
+    var include: ArrayList<String?>? = null
+    var exclude: ArrayList<String?>? = null
 
     // 以下不是可配置参数
-    private var includePatterns :ArrayList<Pattern> = arrayListOf()
-    private var excludePatterns : ArrayList<Pattern> = arrayListOf()
+    var includePatterns :ArrayList<Pattern> = arrayListOf()
+    var excludePatterns : ArrayList<Pattern> = arrayListOf()
     // initClassName的class文件或含有initClassName类的jar文件
-    private var fileContainsInitClass: File? = null
-    private var classList : ArrayList<String> = arrayListOf()
-
-    fun setInterfaceName(interfaceName: String?) {
-        this.interfaceName = interfaceName
-    }
-
-    fun getInterfaceName(): String? {
-        return interfaceName
-    }
-
-    fun setSuperClassNames(superClassNames: ArrayList<String?>?) {
-        this.superClassNames = superClassNames
-    }
-
-    fun getSuperClassNames(): ArrayList<String?>? {
-        return superClassNames
-    }
-
-    fun setInitClassName(initClassName: String?) {
-        this.initClassName = initClassName
-    }
-
-    fun getInitClassName(): String? {
-        return initClassName
-    }
-
-    fun setInitMethodName(initMethodName: String?) {
-        this.initMethodName = initMethodName
-    }
-
-    fun getInitMethodName(): String? {
-        return this.initMethodName
-    }
-
-    fun setRegisterClassName(registerClassName: String?) {
-        this.registerClassName = registerClassName
-    }
-
-    fun getRegisterClassName(): String? {
-        return registerClassName
-    }
-
-    fun setRegisterMethodName(registerMethodName: String?) {
-        this.registerMethodName = registerMethodName
-    }
-
-    fun getRegisterMethodName(): String? {
-        return registerMethodName
-    }
-
-    fun setInclude(include: ArrayList<String?>?) {
-        this.include = include
-    }
-
-    fun getInclude(): ArrayList<String?>? {
-        return include
-    }
-
-    fun setExclude(exclude: ArrayList<String?>?) {
-        this.exclude = exclude
-    }
-
-    fun getExclude(): ArrayList<String?>? {
-        return exclude
-    }
-
-    fun setIncludePatterns(includePatterns: ArrayList<Pattern>) {
-        this.includePatterns = includePatterns
-    }
-
-    fun getIncludePatterns(): ArrayList<Pattern> {
-        return includePatterns
-    }
-
-    fun setExcludePatterns(excludePatterns: ArrayList<Pattern>) {
-        this.excludePatterns = excludePatterns
-    }
-
-    fun getExcludePatterns(): ArrayList<Pattern> {
-        return excludePatterns
-    }
-
-    fun setFileContainsInitClass(fileContainsInitClass: File?) {
-        this.fileContainsInitClass = fileContainsInitClass
-    }
-
-    fun getFileContainsInitClass(): File? {
-        return fileContainsInitClass
-    }
-
-    fun setClassList(classList: ArrayList<String>) {
-        this.classList = classList
-    }
-
-    fun getClassList(): ArrayList<String> {
-        return classList
-    }
-
+    var fileContainsInitClass: File? = null
+    var classList : ArrayList<String> = arrayListOf()
 
     fun reset() {
         fileContainsInitClass = null

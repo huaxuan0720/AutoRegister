@@ -23,7 +23,7 @@ open class AutoRegisterConfig {
             val info = RegisterInfo()
 
             // 读取需要扫描的接口和父类，可以使用数据指定多个需要扫描父类
-            info.setInterfaceName(map.get("scanInterface") as String)
+            info.interfaceName = map.get("scanInterface") as String
 
             val superClassList = arrayListOf<String>()
             val superClasses : Any? = map.get("scanSuperClasses")
@@ -35,17 +35,17 @@ open class AutoRegisterConfig {
                 superClassList.addAll(superClasses as ArrayList<String>)
             }
 
-            info.setSuperClassNames(superClassNames = superClassList as ArrayList<String?>)
+            info.superClassNames = superClassList as ArrayList<String?>
             // 代码注入的类
-            info.setInitClassName(initClassName = map.get("codeInsertToClassName") as String?)
+            info.initClassName = map.get("codeInsertToClassName") as String?
             // 代码注入的方法（默认为static块）,static代码块可以在程序启动的时候就初始化并完成代码注入。
-            info.setInitMethodName(initMethodName = map.get("codeInsertToMethodName") as String?)
+            info.initMethodName = map.get("codeInsertToMethodName") as String?
             // 生成的代码所调用的方法，一般推荐使用静态方法
-            info.setRegisterMethodName(registerMethodName = map.get("registerMethodName") as String?)
+            info.registerMethodName = map.get("registerMethodName") as String?
             // 注册方法所在的类
-            info.setRegisterClassName(registerClassName = map.get("registerClassName") as String?)
-            info.setInclude(include = map.get("include") as ArrayList<String?>?)
-            info.setExclude(exclude = map.get("exclude") as ArrayList<String?>?)
+            info.registerClassName = map.get("registerClassName") as String?
+            info.include = map.get("include") as ArrayList<String?>?
+            info.exclude = map.get("exclude") as ArrayList<String?>?
             info.init()
             if (info.validate())
                 list.add(info)

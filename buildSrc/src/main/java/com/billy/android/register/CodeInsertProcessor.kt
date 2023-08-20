@@ -21,9 +21,9 @@ class CodeInsertProcessor(private val extension: RegisterInfo) {
     companion object {
         @JvmStatic
         fun insertInitCodeTo(extension: RegisterInfo) {
-            if (extension.getClassList().isNotEmpty()) {
+            if (extension.classList.isNotEmpty()) {
                 val processor : CodeInsertProcessor = CodeInsertProcessor(extension)
-                val file = extension.getFileContainsInitClass()
+                val file = extension.fileContainsInitClass
                 if (file != null) {
                     if (file.name.endsWith(".jar")) {
                         processor.generateCodeIntoJarFile(file)
@@ -103,9 +103,9 @@ class CodeInsertProcessor(private val extension: RegisterInfo) {
         if (entryName == null || !entryName.endsWith(".class")) {
             return false
         }
-        if (!extension.getInitClassName().isNullOrEmpty()) {
+        if (!extension.initClassName.isNullOrEmpty()) {
             entryName = entryName.substring(0, entryName.lastIndexOf('.'))
-            return extension.getInitClassName() == entryName
+            return extension.initClassName == entryName
         }
         return false
     }
@@ -131,7 +131,7 @@ class CodeInsertProcessor(private val extension: RegisterInfo) {
             exceptions: Array<out String>?
         ): MethodVisitor {
             var mv : MethodVisitor = super.visitMethod(access, name, descriptor, signature, exceptions)
-            if (name == extension.getInitMethodName()) {
+            if (name == extension.initMethodName) {
                 val _static: Boolean = (access and Opcodes.ACC_STATIC) > 0
                 mv = MyMethodVisitor(Opcodes.ASM6, mv, _static)
             }
@@ -142,7 +142,7 @@ class CodeInsertProcessor(private val extension: RegisterInfo) {
     private inner class MyMethodVisitor(api: Int, mv: MethodVisitor, private val _static : Boolean): MethodVisitor(api, mv) {
         override fun visitInsn(opcode: Int) {
             if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
-                extension.getClassList().forEach { name -> 
+                extension.classList.forEach { name ->
                     if (!_static) {
                         // 加载This
                         mv.visitVarInsn(Opcodes.ALOAD, 0)
@@ -155,15 +155,15 @@ class CodeInsertProcessor(private val extension: RegisterInfo) {
                     //调用注册方法将组件实例注册到组件库中
                     if (_static) {
                         mv.visitMethodInsn(Opcodes.INVOKESTATIC
-                            , extension.getRegisterClassName()
-                            , extension.getRegisterMethodName()
-                            , "(L${extension.getInterfaceName()};)V"
+                            , extension.registerClassName
+                            , extension.registerMethodName
+                            , "(L${extension.interfaceName};)V"
                             , false)
                     } else {
                         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL
-                            , extension.getRegisterClassName()
-                            , extension.getRegisterMethodName()
-                            , "(L${extension.getInterfaceName()};)V"
+                            , extension.registerClassName
+                            , extension.registerMethodName
+                            , "(L${extension.interfaceName};)V"
                             , false)
                     }
                 }
