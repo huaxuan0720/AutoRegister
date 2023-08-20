@@ -10,7 +10,6 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.util.Enumeration
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
@@ -21,10 +20,10 @@ class CodeInsertProcessor(private val extension: RegisterInfo) {
 
     companion object {
         @JvmStatic
-        fun insertInitCodeTo(extension: RegisterInfo?) {
-            if (extension != null && extension.getClassList().isNotEmpty()) {
+        fun insertInitCodeTo(extension: RegisterInfo) {
+            if (extension.getClassList().isNotEmpty()) {
                 val processor : CodeInsertProcessor = CodeInsertProcessor(extension)
-                val file: File? = extension.getFileContainsInitClass()
+                val file = extension.getFileContainsInitClass()
                 if (file != null) {
                     if (file.name.endsWith(".jar")) {
                         processor.generateCodeIntoJarFile(file)
@@ -39,38 +38,39 @@ class CodeInsertProcessor(private val extension: RegisterInfo) {
 
 
 
-    private fun generateCodeIntoJarFile(jarFile: File?) {
-        if (jarFile!= null) {
-            val optJar = File(jarFile.parent, jarFile.name + ".opt")
-            if (optJar.exists()) optJar.delete()
-            val file = JarFile(jarFile)
-            val enumeration: Enumeration<*> = file.entries()
-            val jarOutputStream = JarOutputStream(FileOutputStream(optJar))
-
-            while (enumeration.hasMoreElements()) {
-                val jarEntry: JarEntry = enumeration.nextElement() as JarEntry
-                val entryName: String = jarEntry.getName()
-                val zipEntry = ZipEntry(entryName)
-                val inputStream: InputStream = file.getInputStream(jarEntry)
-                jarOutputStream.putNextEntry(zipEntry)
-                if (isInitClass(entryName)) {
-                    println("generate code into:$entryName")
-                    val bytes = doGenerateCode(inputStream)
-                    jarOutputStream.write(bytes)
-                } else {
-                    jarOutputStream.write(IOUtils.toByteArray(inputStream))
-                }
-                inputStream.close()
-                jarOutputStream.closeEntry()
-            }
-            jarOutputStream.close()
-            file.close()
-
-            if (jarFile.exists()) {
-                jarFile.delete()
-            }
-            optJar.renameTo(jarFile)
+    private fun generateCodeIntoJarFile(jarFile: File): File {
+        val optJar = File(jarFile.parent, jarFile.name + ".opt")
+        if (optJar.exists()) {
+            optJar.delete()
         }
+        val file = JarFile(jarFile)
+        val enumeration = file.entries()
+        val jarOutputStream = JarOutputStream(FileOutputStream(optJar))
+
+        while (enumeration.hasMoreElements()) {
+            val jarEntry: JarEntry = enumeration.nextElement() as JarEntry
+            val entryName: String = jarEntry.name
+            val zipEntry = ZipEntry(entryName)
+            val inputStream: InputStream = file.getInputStream(jarEntry)
+            jarOutputStream.putNextEntry(zipEntry)
+            if (isInitClass(entryName)) {
+                println("generate code into:$entryName")
+                val bytes = doGenerateCode(inputStream)
+                jarOutputStream.write(bytes)
+            } else {
+                jarOutputStream.write(IOUtils.toByteArray(inputStream))
+            }
+            inputStream.close()
+            jarOutputStream.closeEntry()
+        }
+        jarOutputStream.close()
+        file.close()
+
+        if (jarFile.exists()) {
+            jarFile.delete()
+        }
+        optJar.renameTo(jarFile)
+        return jarFile
     }
 
     private fun generateCodeIntoClassFile(file: File): ByteArray? {
@@ -90,7 +90,7 @@ class CodeInsertProcessor(private val extension: RegisterInfo) {
         return bytes
     }
 
-    private fun doGenerateCode(inputStream: InputStream): ByteArray? {
+    private fun doGenerateCode(inputStream: InputStream): ByteArray {
         val cr = ClassReader(inputStream)
         val cw = ClassWriter(cr, 0)
         val cv: ClassVisitor = MyClassVisitor(Opcodes.ASM6, cw)
@@ -100,15 +100,28 @@ class CodeInsertProcessor(private val extension: RegisterInfo) {
 
     private fun isInitClass(entryName: String?): Boolean {
         var entryName = entryName
-        if (entryName == null || !entryName.endsWith(".class")) return false
+        if (entryName == null || !entryName.endsWith(".class")) {
+            return false
+        }
         if (!extension.getInitClassName().isNullOrEmpty()) {
             entryName = entryName.substring(0, entryName.lastIndexOf('.'))
-            return extension.getInitClassName() === entryName
+            return extension.getInitClassName() == entryName
         }
         return false
     }
 
     private inner class MyClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
+
+        override fun visit(
+            version: Int,
+            access: Int,
+            name: String?,
+            signature: String?,
+            superName: String?,
+            interfaces: Array<out String>?
+        ) {
+            super.visit(version, access, name, signature, superName, interfaces)
+        }
 
         override fun visitMethod(
             access: Int,
@@ -118,11 +131,12 @@ class CodeInsertProcessor(private val extension: RegisterInfo) {
             exceptions: Array<out String>?
         ): MethodVisitor {
             var mv : MethodVisitor = super.visitMethod(access, name, descriptor, signature, exceptions)
-            if (name == extension.getInitClassName()) {
+            println("${name} ${extension.getInitMethodName()}: ${name == extension.getInitMethodName()}")
+            if (name == extension.getInitMethodName()) {
                 val _static: Boolean = (access and Opcodes.ACC_STATIC) > 0
                 mv = MyMethodVisitor(Opcodes.ASM6, mv, _static)
             }
-            return super.visitMethod(access, name, descriptor, signature, exceptions)
+            return mv
         }
     }
     
@@ -144,13 +158,13 @@ class CodeInsertProcessor(private val extension: RegisterInfo) {
                         mv.visitMethodInsn(Opcodes.INVOKESTATIC
                             , extension.getRegisterClassName()
                             , extension.getRegisterMethodName()
-                            , "(L${extension.getInterfaceName()})V"
+                            , "(L${extension.getInterfaceName()};)V"
                             , false)
                     } else {
                         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL
                             , extension.getRegisterClassName()
                             , extension.getRegisterMethodName()
-                            , "(L${extension.getInterfaceName()})V"
+                            , "(L${extension.getInterfaceName()};)V"
                             , false)
                     }
                 }
