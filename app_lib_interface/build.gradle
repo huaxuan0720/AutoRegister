@@ -1,17 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '26.0.2'
-
+    compileSdk  33
+    namespace "com.billy.app_lib_interface"
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 25
+        minSdk  14
+        targetSdk 33
         versionCode 1
         versionName "1.0"
-
-
     }
 
     buildTypes {

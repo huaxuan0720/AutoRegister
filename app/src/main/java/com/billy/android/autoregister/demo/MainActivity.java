@@ -1,8 +1,9 @@
 package com.billy.android.autoregister.demo;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.billy.app_lib.IOther;
 import com.billy.app_lib.OtherManager;
