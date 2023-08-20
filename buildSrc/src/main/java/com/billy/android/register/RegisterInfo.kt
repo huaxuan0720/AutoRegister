@@ -1,7 +1,5 @@
 package com.billy.android.register
 
-import android.databinding.tool.ext.S
-import com.android.build.gradle.internal.cxx.caching.snakeCase
 import java.io.File
 import java.lang.StringBuilder
 import java.util.regex.Pattern
